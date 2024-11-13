@@ -22,9 +22,11 @@ class Standardization:
         self.xTrain = kwargs['Xtrain']  
         self.xTest = kwargs['XTest']
         self.method = kwargs['method']
-        self.pt = None
-        self.xTrain_transformed = self.powerTransformer()
-        self.xTest_transformed = self.powerTransformTest()
+        if(self.method=='yeo-johnson' or 'box-cox'):
+            self.pt = None
+            self.xTrain_transformed = self.powerTransformer()
+            self.xTest_transformed = self.powerTransformTest()
+        
         
     def powerTransformer(self):
         """
