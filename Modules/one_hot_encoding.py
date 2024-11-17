@@ -29,7 +29,5 @@ class OneHotEncoding:
         Returns:
             DataFrame: Data after one-hot encoding.
         """
-        ohe=OneHotEncoder(handle_unknown='ignore',sparse_output=False).set_output(transform='pandas')
-        ohetransform=ohe.fit_transform(self.data[self.categoricalColumns]).astype(int)
-        data= pd.concat([self.data,ohetransform],axis=1).drop(columns=self.categoricalColumns)    
-        return pd.DataFrame(data)
+        df_encoded = pd.get_dummies(self.data, columns=self.categoricalColumns,drop_first=False, dtype=float)
+        return df_encoded

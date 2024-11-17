@@ -28,6 +28,8 @@ class StatModelOLS:
         Returns:
             str: Summary of the OLS model.
         """
+        self.X, self.y = self.X.align(self.y, axis=0, join='inner')
+
         X = sm.add_constant(self.X)
         model = sm.OLS(self.y, X).fit()
         summary = model.summary()

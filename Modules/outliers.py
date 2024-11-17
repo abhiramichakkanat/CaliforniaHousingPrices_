@@ -32,16 +32,38 @@ class Outlier:
         Returns:
             DataFrame: Data after outlier removal.
         """
+        
         data=pd.DataFrame(self.oneHotEncodedData)
+        
+
         dffeatureNames=data.columns
         cleaned_df = data.copy()
-        for col in dffeatureNames:
-                Q1 = cleaned_df[col].quantile(self.Q1)
-                Q3 = cleaned_df[col].quantile(self.Q2)
-                IQR = Q3 - Q1        
-                lower_bound = Q1 - self.multiplierLB * IQR
-                upper_bound = Q3 + self.multiplierUB * IQR
-                cleaned_df = cleaned_df[(cleaned_df[col] >= lower_bound) & (cleaned_df[col] <= upper_bound)]
+        
 
-        cleaned_df = cleaned_df.reset_index(drop=True)
-        return pd.DataFrame(cleaned_df)
+        numeric_cols = cleaned_df.select_dtypes(include=['number']).columns
+
+        for col in numeric_cols:
+            # Skip constant columns (those with no variance)
+            if cleaned_df[col].nunique() <= 1:
+                continue
+
+            Q1 = cleaned_df[col].quantile(self.Q1)
+            Q3 = cleaned_df[col].quantile(self.Q2)
+            IQR = Q3 - Q1
+
+            # If IQR is zero (or close), skip outlier detection
+            if IQR == 0:
+                continue
+
+            lower_bound = Q1 - self.multiplierLB * IQR
+            upper_bound = Q3 + self.multiplierUB * IQR
+
+            # Apply filtering for outliers
+            cleaned_df = cleaned_df[(cleaned_df[col] >= lower_bound) & (cleaned_df[col] <= upper_bound)]
+
+            # Check if the DataFrame becomes empty after filtering
+            if cleaned_df.empty:
+               
+                break
+
+        return cleaned_df

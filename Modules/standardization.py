@@ -19,9 +19,9 @@ class Standardization:
             XTest (DataFrame): Testing data.
             method (str): Transformation method, e.g., 'yeo-johnson'.
         """
-        self.xTrain = kwargs['Xtrain']  
-        self.xTest = kwargs['XTest']
-        self.method = kwargs['method']
+        self.xTrain = kwargs.get('Xtrain',None)
+        self.xTest = kwargs.get('XTest',None)
+        self.method = kwargs.get('method',None)
         if(self.method=='yeo-johnson' or 'box-cox'):
             self.pt = None
             self.xTrain_transformed = self.powerTransformer()
